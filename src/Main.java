@@ -1,4 +1,5 @@
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -13,10 +14,25 @@ public class Main {
         cre.start();
 
         s.nextLine();
-        /*while( !s.nextLine().equals("1")) {
-            sch.add( new Date(),null );
-        } //*/
 
         sch.exit();
+        cre.exit();
+    }
+
+
+    static String date2String() {
+        return date2String(new Date());
+    }
+
+    static String date2String(long dt) {
+        return date2String(new Date(dt));
+    }
+
+    static String date2String(Date dt) {
+        if( dt==null )
+            dt = new Date();
+
+        SimpleDateFormat fmt = new SimpleDateFormat("mm:ss.SSS");
+        return fmt.format(dt);
     }
 }

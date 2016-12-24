@@ -1,4 +1,4 @@
-import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.concurrent.Callable;
 
@@ -23,14 +23,13 @@ public class Record extends Thread implements Callable, Comparable<Record> {
         try {
             callable.call();
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
     @Override
     public Object call() throws Exception {
-        SimpleDateFormat fmt = new SimpleDateFormat("mm:ss.SSS");
-        System.out.println( fmt.format(created) +" - "+ fmt.format(runAt) +" - "+ fmt.format(new Date()) );
+        System.out.println( Main.date2String() +" - run at: "+ Main.date2String(runAt) + " - created: "+Main.date2String(created) );
         return null;
     }
 

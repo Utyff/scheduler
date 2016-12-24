@@ -13,18 +13,22 @@ public class Scheduler extends Thread {
     private final LinkedList<Record> list = new LinkedList<>();
     private boolean exit;
 
+    @SuppressWarnings("SameParameterValue")
     void add(Date runAt, Callable call) {
         Record rec = new Record(runAt, call);
 
         synchronized( list ) {
             ListIterator<Record> iterator = list.listIterator(list.size());
+
             while (iterator.hasPrevious()) {
                 if (rec.compareTo(iterator.previous()) > 0) {
                     iterator.add(rec);
+                    this.interrupt();
                     return;
                 }
             }
-            list.add(rec);
+
+            list.addFirst(rec);
             this.interrupt();
         }
     }
@@ -37,14 +41,11 @@ public class Scheduler extends Thread {
                 Thread.sleep(getSleepTime());
                 runJobs();
             } catch (InterruptedException e) {
-                if( exit )  break;
+                if( exit ) {
+                    System.out.println(Main.date2String() + " - Scheduler exit -");
+                    break;
+                }
             }
-
-            /*if(list.size()>0) {
-                Record rec = list.get(0);
-                list.remove(0);
-                rec.start();
-            } //*/
         }
     }
 
@@ -62,10 +63,13 @@ public class Scheduler extends Thread {
 
     private void runJobs() {
         Date now = new Date();
+
         while( list.size()>0 ) {
             Record rec = list.getFirst();
+
             if( rec.runAt.compareTo(now)==1 )
                 return;
+
             rec.start();
             list.removeFirst();
         }
