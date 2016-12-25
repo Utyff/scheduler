@@ -15,22 +15,30 @@ public class Scheduler extends Thread {
 
     @SuppressWarnings("SameParameterValue")
     void add(Date runAt, Callable call) {
-        Record rec = new Record(runAt, call);
+        Record recNew = new Record(runAt, call);
 
         synchronized( list ) {
             ListIterator<Record> iterator = list.listIterator(list.size());
 
             while (iterator.hasPrevious()) {
-                if (rec.compareTo(iterator.previous()) > 0) {
-                    iterator.add(rec);
+                if (recNew.compareTo(iterator.previous()) >= 0) {
+                    insert(iterator, recNew);
                     this.interrupt();
                     return;
                 }
             }
 
-            list.addFirst(rec);
+            list.addFirst(recNew);
             this.interrupt();
         }
+    }
+
+    private void insert(ListIterator<Record> iterator, Record rec) {
+        if( iterator.hasNext() ) {
+            iterator.next();
+            iterator.add(rec);
+        }
+        else list.addLast(rec);
     }
 
     @Override
@@ -74,4 +82,29 @@ public class Scheduler extends Thread {
             list.removeFirst();
         }
     }
+
+/*    void test() {
+        long start = System.currentTimeMillis();
+        for (int i=0; i<20; i++) {
+            long tt = (long)(10000*Math.random());
+            this.add(new Date(start+tt),null);
+
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        this.printJobs();
+    }
+
+
+    private void printJobs() {
+        for(Record rec : list)
+            try {
+                rec.call();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+    }//*/
 }

@@ -9,8 +9,9 @@ import java.util.Date;
 public class Creator extends Thread {
     private Scheduler sch;
 
-    Creator(Scheduler sch) {
+    Creator(Scheduler sch, String name) {
         this.sch = sch;
+        this.setName(name);
     }
 
     @Override
@@ -18,18 +19,18 @@ public class Creator extends Thread {
         long timeout, startTime;
 
         while( true ) {
+            startTime = System.currentTimeMillis() + (long)(10000.0*Math.random());
+            sch.add(new Date(startTime), null);
+
             timeout = (long)(10000.0*Math.random());
-            System.out.println(Main.date2String() +" - creator sleep for: "+ timeout);
+            System.out.println(Main.date2String() +" - creator "+getName()+" new: "
+                             + Main.date2String(startTime)+" sleep for: "+ timeout);
             try {
                 sleep(timeout);
             } catch (InterruptedException e) {
-                System.out.println(Main.date2String() +" - Creator exit -");
+                System.out.println(Main.date2String() +" - Creator "+getName()+" exit -");
                 break;
             }
-
-            startTime = System.currentTimeMillis() + (long)(10000.0*Math.random());
-            System.out.println(Main.date2String() +" - create new: " + Main.date2String(startTime));
-            sch.add(new Date(startTime), null);
         }
     }
 
