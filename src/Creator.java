@@ -10,8 +10,8 @@ public class Creator extends Thread {
     private Scheduler sch;
 
     Creator(Scheduler sch, String name) {
+        super(name);
         this.sch = sch;
-        this.setName(name);
     }
 
     @Override
